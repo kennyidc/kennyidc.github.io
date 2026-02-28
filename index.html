@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英语学习效果评估系统</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://smtpjs.com/v3/smtp.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- 登录页面 -->
+        <div id="login-page" class="page">
+            <h1>英语学习效果评估系统</h1>
+            <div class="login-form">
+                <h2>用户登录</h2>
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button id="login-btn">登录</button>
+                <div id="login-message"></div>
+            </div>
+        </div>
+
+        <!-- 用户管理页面 -->
+        <div id="user-management-page" class="page" style="display: none;">
+            <h1>英语学习效果评估系统</h1>
+            <div class="test-header">
+                <h2>用户管理</h2>
+                <button id="back-to-test-btn-from-management">返回测试</button>
+            </div>
+            <div class="user-management-form">
+                <h3>添加用户</h3>
+                <div class="form-group">
+                    <label for="new-username">用户名</label>
+                    <input type="text" id="new-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-password">密码</label>
+                    <input type="password" id="new-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-remark">备注（真实姓名）</label>
+                    <input type="text" id="new-remark" required>
+                </div>
+                <button id="add-user-btn">添加用户</button>
+                <div id="add-user-message"></div>
+            </div>
+            <div class="user-list">
+                <h3>用户列表</h3>
+                <div id="user-list-container"></div>
+            </div>
+        </div>
+
+        <!-- 邮箱配置页面 -->
+        <div id="email-config-page" class="page" style="display: none;">
+            <h1>英语学习效果评估系统</h1>
+            <div class="test-header">
+                <h2>邮箱配置</h2>
+                <button id="back-to-test-btn-from-email-config">返回测试</button>
+            </div>
+            <div class="email-config-form">
+                <h3>邮箱设置</h3>
+                <div class="form-group">
+                    <label for="smtp-server">SMTP服务器</label>
+                    <input type="text" id="smtp-server" value="smtp.qq.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="smtp-port">SMTP端口</label>
+                    <input type="number" id="smtp-port" value="587" required>
+                </div>
+                <div class="form-group">
+                    <label for="email-username">邮箱账号</label>
+                    <input type="email" id="email-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="email-password">邮箱密码/授权码</label>
+                    <input type="password" id="email-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="recipient-email">接收邮箱</label>
+                    <input type="email" id="recipient-email" value="1585088657@QQ.COM" required>
+                </div>
+                <button id="save-email-config-btn">保存配置</button>
+                <div id="email-config-message"></div>
+            </div>
+        </div>
+
+        <!-- 习题管理页面 -->
+        <div id="question-management-page" class="page" style="display: none;">
+            <h1>英语学习效果评估系统</h1>
+            <div class="test-header">
+                <h2>习题管理</h2>
+                <button id="back-to-test-btn-from-question-management">返回测试</button>
+            </div>
+            <div class="question-management-form">
+                <h3>添加习题</h3>
+                <div class="form-group">
+                    <label for="question-id">题号</label>
+                    <input type="number" id="question-id" min="1" placeholder="自动生成">
+                </div>
+                <div class="form-group">
+                    <label for="question-period">期数</label>
+                    <input type="number" id="question-period" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="question-content">问题内容</label>
+                    <textarea id="question-content" rows="3"></textarea>
+                    <small id="content-hint">请输入问题内容</small>
+                </div>
+                <div class="form-group">
+                    <label for="question-type">题型</label>
+                    <select id="question-type" required>
+                        <option value="single">单选题（二选一）</option>
+                        <option value="multiple">多选题（四选1-4）</option>
+                        <option value="fill">拼写填空题</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="option-a">选项A</label>
+                    <input type="text" id="option-a">
+                </div>
+                <div class="form-group">
+                    <label for="option-b">选项B</label>
+                    <input type="text" id="option-b">
+                </div>
+                <div class="form-group">
+                    <label for="option-c">选项C</label>
+                    <input type="text" id="option-c">
+                </div>
+                <div class="form-group">
+                    <label for="option-d">选项D</label>
+                    <input type="text" id="option-d">
+                </div>
+                <div class="form-group">
+                    <label for="question-audio-file">音频文件（可选）</label>
+                    <input type="file" id="question-audio-file" accept=".mp3,.wav,.ogg">
+                </div>
+                <div class="form-group">
+                    <label for="question-time-limit">时限（秒）</label>
+                    <input type="number" id="question-time-limit" min="1" value="10" required>
+                    <small>必须大于0秒</small>
+                </div>
+                <button id="add-question-btn">添加习题</button>
+                <div id="add-question-message"></div>
+            </div>
+            <div class="question-import-form">
+                <h3>批量导入习题</h3>
+                <div class="form-group">
+                    <label for="import-file">导入文件（Excel或CSV）</label>
+                    <input type="file" id="import-file" accept=".xlsx,.xls,.csv" required>
+                </div>
+                <div class="form-group">
+                    <label for="import-audio-files">音频文件（可选，可多选）</label>
+                    <input type="file" id="import-audio-files" accept=".mp3,.wav,.ogg" multiple>
+                </div>
+                <button id="import-question-btn">导入习题</button>
+                <div id="import-question-message"></div>
+            </div>
+            <div class="question-list">
+                <h3>习题列表</h3>
+                <div class="form-group">
+                    <label for="question-period-select">选择期数</label>
+                    <select id="question-period-select"></select>
+                </div>
+                <div id="question-list-container"></div>
+            </div>
+        </div>
+
+        <!-- 答题引导页面 -->
+        <div id="guide-page" class="page" style="display: none;">
+            <h1>英语学习效果评估系统</h1>
+            <div class="test-header">
+                <h2>答题引导</h2>
+            </div>
+            <div id="guide-content"></div>
+            <button id="i-know-btn">我知道了</button>
+        </div>
+
+        <!-- 限时习题页面 -->
+        <div id="timed-question-page" class="page" style="display: none;">
+            <h1>英语学习效果评估系统</h1>
+            <div class="test-header">
+                <h2>限时习题</h2>
+                <div class="timer">剩余时间：<span id="countdown"></span>秒</div>
+            </div>
+            <div id="timed-question-content"></div>
+            <button id="submit-timed-question-btn">提交答案</button>
+        </div>
+
+        <!-- 测试页面 -->
+        <div id="test-page" class="page" style="display: none;">
+            <h1>英语学习效果评估系统</h1>
+            <div class="test-header">
+                <h2>欢迎，<span id="current-user"></span></h2>
+                <div>
+                    <button id="user-management-btn" style="display: none;">用户管理</button>
+                    <button id="question-management-btn" style="display: none;">习题管理</button>
+                    <button id="email-config-btn" style="display: none;">邮箱配置</button>
+                    <button id="data-management-btn" style="display: none;">数据管理</button>
+                    <button id="logout-btn">退出登录</button>
+                </div>
+            </div>
+            <div class="test-form">
+                <div class="form-group">
+                    <label for="sheet-name">选择测试期数</label>
+                    <select id="sheet-name"></select>
+                </div>
+                <button id="start-test-btn">开始测试</button>
+            </div>
+            <div id="question-container" style="display: none;">
+                <h3 id="question-title"></h3>
+                <div id="question-content"></div>
+                <div class="navigation-buttons">
+                    <button id="prev-btn">上一题</button>
+                    <button id="next-btn">下一题</button>
+                    <button id="submit-btn">提交试卷</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 数据管理页面 -->
+        <div id="data-management-page" class="page" style="display: none;">
+            <h1>英语学习效果评估系统</h1>
+            <div class="test-header">
+                <h2>数据管理</h2>
+                <button id="back-to-test-btn-from-data-management">返回测试</button>
+            </div>
+            <div class="data-management-form">
+                <h3>数据导出</h3>
+                <p>导出所有系统数据，包括用户、习题、音频文件和邮箱配置</p>
+                <button id="export-all-data-btn">导出所有数据</button>
+                <button id="export-initial-data-btn">导出为initial_data.json格式</button>
+                <button id="export-user-answers-btn">导出所有用户答案</button>
+                <p class="hint">使用此格式更新离线包中的数据文件</p>
+                <div id="export-data-message"></div>
+                <hr>
+                <h3>数据导入</h3>
+                <p>导入之前导出的系统数据</p>
+                <div class="form-group">
+                    <label for="import-all-data-file">选择数据文件</label>
+                    <input type="file" id="import-all-data-file" accept=".json" required>
+                </div>
+                <button id="import-all-data-btn">导入数据</button>
+                <div id="import-data-message"></div>
+            </div>
+        </div>
+
+        <!-- 结果页面 -->
+        <div id="result-page" class="page" style="display: none;">
+            <h1>英语学习效果评估系统</h1>
+            <h2>测试完成</h2>
+            <div id="result-content"></div>
+            <button id="back-to-test-btn">返回测试</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
